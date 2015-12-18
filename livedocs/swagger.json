@@ -1,0 +1,156 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Backend Wallet System",
+        "description": "Bitcoin backend for the sales-app. Provides new wallets, invoiceaddresses and sweeps the wallets.",
+        "version": "0.0.1"
+    },
+    "host": "localhost:8888",
+    "schemes": [
+        "https"
+    ],
+    "basePath": "/v1",
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/wallets": {
+            "post": {
+                "summary": "Creates a new HD Wallet",
+                "description": "Create a new HD wallet based on a provided seed\n",
+                "parameters": [
+                    {
+                        "name": "walletCreationPayload",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/WalletCreationPayload"
+                        }
+                    }
+                ],
+                "tags": [
+                    "Wallets"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Wallet Id",
+                        "schema": {
+                            "$ref": "#/definitions/WalletCreationResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/wallets/{id}/newaddress": {
+            "put": {
+                "summary": "Get's a new address for the given wallet",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "type": "string",
+                        "description": "Id of the HD Wallet to create a new address from"
+                    },
+                    {
+                        "name": "newAddressPayload",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/AddressCreationPayload"
+                        }
+                    }
+                ],
+                "tags": [
+                    "Wallets",
+                    "Address"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Wallet Id",
+                        "schema": {
+                            "$ref": "#/definitions/WalletCreationResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "WalletCreationPayload": {
+            "type": "object",
+            "properties": {
+                "seed": {
+                    "type": "string",
+                    "description": "Seed to create user Keychain"
+                },
+                "walletName": {
+                    "type": "string",
+                    "description": "Wallet Label to be stored on Blockchain as service provider. This fields is optional."
+                },
+                "backupXpub": {
+                    "type": "string",
+                    "description": "Backup keychain's public key. If it's not provided app's default will be used instead. This fields is optional."
+                },
+                "whiteListedAddresses": {
+                    "type": "array",
+                    "description": "Addresses to be whitelisted on this wallet transactions",
+                    "items": {
+                        "type": "string",
+                        "description": "Wallet addresses"
+                    }
+                }
+            }
+        },
+        "WalletCreationResponse": {
+            "type": "object",
+            "properties": {
+                "walletId": {
+                    "type": "string",
+                    "description": "Wallet unique ID"
+                }
+            }
+        },
+        "GetAddressPayload": {
+            "type": "array",
+            "description": "Array of Wallet IDs where this address will be whitelisted",
+            "items": {
+                "type": "string",
+                "description": "Valid wallet Ids"
+            }
+        },
+        "GetAddressResponse": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string",
+                    "description": "New wallet generated addres"
+                }
+            }
+        },
+        "Error": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "fields": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
